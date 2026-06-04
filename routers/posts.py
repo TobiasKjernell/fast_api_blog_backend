@@ -77,7 +77,7 @@ async def create_post(post:PostCreate, db: Annotated[AsyncSession, Depends(get_d
     result = await db.execute(select(models.User).where(models.User.id == post.user_id))
     user = result.scalars().first()
     if not user:        
-        HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
         detail="User not found")
     
     new_post = models.Post(

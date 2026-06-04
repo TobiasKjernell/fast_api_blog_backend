@@ -10,13 +10,13 @@ from database import get_db
 router = APIRouter()
 ##Posts 
 
-@router.get('', tags=["Posts"], response_model=list[PostResponse])
+@router.get('', response_model=list[PostResponse])
 async def get_posts(db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.Post).options(selectinload(models.Post.author)).order_by(models.Post.date_posted.desc()))
     posts = result.scalars().all()
     return posts
 
-@router.put("/{post_id}", tags=["Posts"], response_model=PostResponse)
+@router.put("/{post_id}", response_model=PostResponse)
 async def update_post_full(post_id:int, post_data:PostCreate, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.Post).where(models.Post.id == post_id))
     post = result.scalars().first()
@@ -38,7 +38,7 @@ async def update_post_full(post_id:int, post_data:PostCreate, db: Annotated[Asyn
     await db.refresh(post, attribute_names=["author"])
     return post
 
-@router.patch("/{post_id}", tags=["Posts"], response_model=PostResponse)
+@router.patch("/{post_id}", response_model=PostResponse)
 async def update_post_partial(post_id:int, post_data:PostUpdate, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.Post).where(models.Post.id == post_id))
     post = result.scalars().first()
@@ -53,7 +53,7 @@ async def update_post_partial(post_id:int, post_data:PostUpdate, db: Annotated[A
     await db.refresh(post, attribute_names=["author"])
     return post
 
-@router.get('/{post_id}', tags=["Posts"], response_model=PostResponse)
+@router.get('/{post_id}', response_model=PostResponse)
 async def get_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.Post).options(selectinload(models.Post.author)).where(models.Post.id == post_id))
     post = result.scalars().first()
@@ -62,7 +62,7 @@ async def get_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
-@router.delete('/{post_id}', tags=["Posts"], status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.Post).where(models.Post.id == post_id))
     post = result.scalars().first()
@@ -72,7 +72,7 @@ async def delete_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]
     await db.delete(post)
     await db.commit()
       
-@router.post('', response_model=PostResponse, status_code=status.HTTP_201_CREATED, tags=["Posts"])
+@router.post('', response_model=PostResponse, status_code=status.HTTP_201_CREATED)
 async def create_post(post:PostCreate, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.User).where(models.User.id == post.user_id))
     user = result.scalars().first()

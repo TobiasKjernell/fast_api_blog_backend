@@ -23,7 +23,7 @@ class User(Base):
     image_file: Mapped[str | None] = mapped_column(String(200), nullable=True, default=None)
 
     #relationships takes the value and goes into whatever it has for posts. 'user.posts' etc later
-    posts: Mapped[list[Post]] = relationship(back_populates="author")
+    posts: Mapped[list[Post]] = relationship(back_populates="author", cascade="all, delete-orphan")
 
     @property #instead of "user.image_path() we can write user.image_path and it return auto, the callers doesnt need to call the method"
     def image_path(self) -> str:

@@ -48,14 +48,14 @@ async def create_user(user: UserCreate, db: Annotated[AsyncSession, Depends(get_
 
     return new_user
 
-@router.get('/token', response_model=Token)
+@router.post('/token', response_model=Token)
 async def login_for_access_token(form_data:Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[AsyncSession, Depends(get_db)]):
     # OauthPasswordRequestForm uses 'username' field, but we treat it as email. This class has a standard to take 'username + password'
     # but in our app we do 'email + password' So we treat username field as an email field
     result = await db.execute(select(models.User).where(func.lower(models.User.email) == form_data.username.lower()))
     user = result.scalars().first()
 
-    if not user or not verify_password(form_data.password, user.paswword_hash):
+    if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -153,7 +153,7 @@ async def update_user(user_id: int, user_update: UserUpdate, db: Annotated[Async
         user_update.email = user_update.email.lower()
 
     new_updates = user_update.model_dump(exclude_unset=True)
-    
+
     for field, value in new_updates.items():
         setattr(user, field, value)
    

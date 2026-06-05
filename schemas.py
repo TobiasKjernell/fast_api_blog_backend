@@ -36,7 +36,7 @@ class PostBase(BaseModel):
     content: str = Field(min_length=1)
 
 class PostCreate(PostBase):
-    user_id: int #TMP testing
+    pass
 
 class PostUpdate(PostBase):
     title:str | None = Field(default=None, min_length=1, max_length=100)

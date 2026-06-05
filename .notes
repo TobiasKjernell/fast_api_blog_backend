@@ -1,0 +1,4 @@
+pwdlib[argon2] = password hashing
+pyjwt = jwt tokens
+pydantic-settings = validates pydantic automatic. all settings in one place, also reads .env files
+python -c "import secrets; print(secrets.token_hex(32))" = CLI to generate a secret key

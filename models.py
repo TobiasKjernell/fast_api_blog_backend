@@ -21,7 +21,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     image_file: Mapped[str | None] = mapped_column(String(200), nullable=True, default=None)
-
+    paswword_hash: Mapped[str] = mapped_column(String(200), nullable=False)
     #relationships takes the value and goes into whatever it has for posts. 'user.posts' etc later
     posts: Mapped[list[Post]] = relationship(back_populates="author", cascade="all, delete-orphan")
 
@@ -30,6 +30,7 @@ class User(Base):
         if self.image_file:
             return f"/media/profile_pics/{self.image_file}"
         return ""
+    
     
 class Post(Base):
     __tablename__ = "posts"

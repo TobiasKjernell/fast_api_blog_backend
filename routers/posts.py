@@ -8,7 +8,6 @@ import models
 from database import get_db
 
 router = APIRouter()
-##Posts 
 
 @router.get('', response_model=list[PostResponse])
 async def get_posts(db: Annotated[AsyncSession, Depends(get_db)]):
